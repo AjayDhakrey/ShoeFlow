@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --breakpoint-xs: 420px;
+}
+
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -109,6 +113,172 @@
     opacity: 0.8;
     transform: scale(1.1);
   }
+}
+
+@keyframes shoeFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(-1.5deg);
+  }
+}
+
+@keyframes shoeStride {
+  0% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  20% {
+    transform: translateY(-18px) rotate(-6deg) scale(1.02);
+  }
+  40% {
+    transform: translateY(-8px) rotate(4deg) scale(1.01);
+  }
+  60% {
+    transform: translateY(2px) rotate(1deg) scale(0.99);
+  }
+  80% {
+    transform: translateY(-10px) rotate(-3deg) scale(1.01);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes shoeFlexCycle {
+  0%, 100% {
+    transform: rotate(0deg) skewX(0deg);
+  }
+  40% {
+    transform: rotate(-12deg) skewX(-4deg) translateY(-8px);
+  }
+  50% {
+    transform: rotate(-16deg) skewX(-6deg) translateY(-10px);
+  }
+  65% {
+    transform: rotate(-4deg) skewX(-1deg) translateY(-3px);
+  }
+}
+
+@keyframes shadowPulseAnim {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(0.75);
+    opacity: 0.15;
+  }
+}
+
+@keyframes sonarRipple {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes glintSweep {
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(250%) skewX(-25deg);
+    opacity: 0;
+  }
+}
+
+@keyframes shoeTurntable360 {
+  0% {
+    transform: perspective(1000px) rotateY(0deg) translateY(0px);
+  }
+  25% {
+    transform: perspective(1000px) rotateY(90deg) translateY(-4px);
+  }
+  50% {
+    transform: perspective(1000px) rotateY(180deg) translateY(0px);
+  }
+  75% {
+    transform: perspective(1000px) rotateY(270deg) translateY(-4px);
+  }
+  100% {
+    transform: perspective(1000px) rotateY(360deg) translateY(0px);
+  }
+}
+
+@keyframes shoeBounceSquish {
+  0% {
+    transform: scale(1, 1) translateY(0);
+  }
+  30% {
+    transform: scale(1.08, 0.88) translateY(12px);
+  }
+  55% {
+    transform: scale(0.96, 1.06) translateY(-14px);
+  }
+  75% {
+    transform: scale(1.02, 0.98) translateY(2px);
+  }
+  100% {
+    transform: scale(1, 1) translateY(0);
+  }
+}
+
+@keyframes turntablePedestalRotate {
+  0% {
+    transform: rotateX(72deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(72deg) rotateZ(360deg);
+  }
+}
+
+.animate-shoe-spin {
+  animation: shoeTurntable360 8s linear infinite;
+}
+
+.animate-shoe-spin-fast {
+  animation: shoeTurntable360 4.5s linear infinite;
+}
+
+.animate-shoe-bounce {
+  animation: shoeBounceSquish 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-turntable-pedestal {
+  animation: turntablePedestalRotate 12s linear infinite;
+}
+
+.animate-shoe-float {
+  animation: shoeFloat 4.5s ease-in-out infinite;
+}
+
+.animate-shoe-stride {
+  animation: shoeStride 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-shoe-flex {
+  animation: shoeFlexCycle 2s ease-in-out infinite;
+}
+
+.animate-shadow-pulse {
+  animation: shadowPulseAnim 4.5s ease-in-out infinite;
+}
+
+.animate-sonar {
+  animation: sonarRipple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.animate-glint {
+  animation: glintSweep 3s ease-in-out infinite;
 }
 
 .animate-walking-bg {

@@ -44,6 +44,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '../../context/AppContext';
 import { WholesaleCalculator } from './WholesaleCalculator';
+import { FootwearMotionStage } from './FootwearMotionStage';
 
 // High-fidelity image assets
 import heroFootwearImg from '../../assets/images/hero_footwear_editorial_1790321154027.jpg';
@@ -54,12 +55,14 @@ import walkingMotionBg from '../../assets/images/footwear_walking_motion_1790245
 
 interface LandingPageProps {
   onLoginSuccess: (role: 'admin' | 'salesperson') => void;
+  onNavigateToLogin?: (mode?: 'login' | 'signup') => void;
   isAlreadyLoggedIn?: boolean;
   onReturnToDashboard?: () => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
   onLoginSuccess,
+  onNavigateToLogin,
   isAlreadyLoggedIn = false,
   onReturnToDashboard,
 }) => {
@@ -477,7 +480,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </nav>
 
           {/* Action Buttons: Log in + Create account / Demo */}
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
             {isAlreadyLoggedIn ? (
               <button
                 onClick={onReturnToDashboard}
@@ -491,23 +494,32 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <>
                 <button
                   onClick={() => {
-                    setAuthMode('login');
-                    setAuthError('');
-                    setIsAuthModalOpen(true);
+                    if (onNavigateToLogin) {
+                      onNavigateToLogin('login');
+                    } else {
+                      setAuthMode('login');
+                      setAuthError('');
+                      setIsAuthModalOpen(true);
+                    }
                   }}
-                  className="px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors cursor-pointer whitespace-nowrap"
+                  className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors cursor-pointer whitespace-nowrap"
                 >
                   Log in
                 </button>
                 <button
                   onClick={() => {
-                    setAuthMode('signup');
-                    setSignupError('');
-                    setIsAuthModalOpen(true);
+                    if (onNavigateToLogin) {
+                      onNavigateToLogin('signup');
+                    } else {
+                      setAuthMode('signup');
+                      setSignupError('');
+                      setIsAuthModalOpen(true);
+                    }
                   }}
-                  className="px-3 sm:px-4 py-1 sm:py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-full transition-all shadow-sm hover:shadow-md active:scale-95 cursor-pointer whitespace-nowrap"
+                  className="px-2.5 sm:px-4 py-1 sm:py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-full transition-all shadow-sm hover:shadow-md active:scale-95 cursor-pointer whitespace-nowrap"
                 >
-                  <span>Create account</span>
+                  <span className="hidden xs:inline">Create account</span>
+                  <span className="xs:hidden">Sign up</span>
                 </button>
               </>
             )}
@@ -520,6 +532,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       <section id="hero" className="pt-8 pb-14 sm:pt-16 sm:pb-24 px-3 sm:px-6 relative overflow-hidden text-center">
         <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+          {/* Animated Footwear Studio Tag */}
+          <div className="inline-flex items-center justify-center">
+            <a
+              href="#motion-lab"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50/80 hover:bg-blue-100 text-blue-700 border border-blue-200/80 text-[11px] font-semibold transition-all shadow-2xs group active:scale-95"
+            >
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping shrink-0" />
+              <span>Interactive Footwear Lab · Test 360° Spin &amp; Runway Stride</span>
+              <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </a>
+          </div>
+
           {/* Main Headline (Exact Hercules composition) */}
           <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.14] text-balance">
             The Best{' '}
@@ -724,7 +748,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         {/* 3. CATEGORY / INDUSTRY CARDS STRIP (Matching Hercules bottom of hero)    */}
         {/* ========================================================================= */}
         <div className="max-w-6xl mx-auto pt-6 sm:pt-8">
-          <div className="flex sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 text-left">
+          <div className="flex md:grid md:grid-cols-5 gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 text-left">
             {[
               {
                 title: 'Apex Runner Pro',
@@ -765,35 +789,60 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <div
                 key={idx}
                 onClick={() => {
-                  const caseStudies = document.getElementById('case-studies');
-                  caseStudies?.scrollIntoView({ behavior: 'smooth' });
+                  const lab = document.getElementById('motion-lab');
+                  lab?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="w-[155px] xs:w-[170px] sm:w-auto shrink-0 snap-start relative aspect-[4/3] rounded-2xl overflow-hidden group cursor-pointer border border-slate-200 shadow-2xs hover:shadow-md transition-all"
+                className={`w-[155px] xs:w-[170px] sm:w-auto shrink-0 snap-start relative aspect-[4/3] rounded-2xl overflow-hidden group cursor-pointer border border-slate-200 shadow-2xs hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 ${
+                  idx % 2 === 0 ? 'hover:rotate-0.5' : 'hover:-rotate-0.5'
+                }`}
               >
                 <img
                   src={item.image}
                   alt={item.title}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 filter brightness-90"
+                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 filter brightness-90 group-hover:brightness-100"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
+                {/* Animated light sweep on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
+
                 {/* Top Badge */}
-                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-slate-900/80 backdrop-blur-md text-[10px] font-semibold text-white flex items-center gap-1 border border-white/10">
+                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-slate-900/80 backdrop-blur-md text-[10px] font-semibold text-white flex items-center gap-1 border border-white/10 group-hover:border-blue-400/50 transition-colors">
                   <span>{item.icon}</span>
                   <span className="truncate max-w-[90px]">{item.category}</span>
                 </div>
 
                 {/* Bottom Title */}
                 <div className="absolute bottom-2 inset-x-2">
-                  <div className="text-xs font-bold text-white leading-tight truncate">{item.title}</div>
-                  <div className="text-[10px] font-mono text-emerald-400 font-semibold">{item.stat}</div>
+                  <div className="text-xs font-bold text-white leading-tight truncate group-hover:text-blue-300 transition-colors">
+                    {item.title}
+                  </div>
+                  <div className="text-[10px] font-mono text-emerald-400 font-semibold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>{item.stat}</span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* ========================================================================= */}
+      {/* 3.5 INTERACTIVE FOOTWEAR MOTION LAB & 3D STRIDE PHYSICS                   */}
+      {/* ========================================================================= */}
+      <div id="motion-lab">
+        <FootwearMotionStage
+          onOpenOrderWizard={() => {
+            if (onNavigateToLogin) {
+              onNavigateToLogin('signup');
+            } else {
+              setIsAuthModalOpen(true);
+            }
+          }}
+        />
+      </div>
 
       {/* ========================================================================= */}
       {/* 4. CASE STUDIES CAROUSEL WITH DUAL STATS (Exact Hercules Screenshot 3)   */}
@@ -876,7 +925,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       <WholesaleCalculator
         onOpenOrderWizard={() => {
-          setIsAuthModalOpen(true);
+          if (onNavigateToLogin) {
+            onNavigateToLogin('signup');
+          } else {
+            setIsAuthModalOpen(true);
+          }
         }}
       />
 
@@ -932,6 +985,139 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         </div>
       </section>
+
+      {/* ========================================================================= */}
+      {/* 7.5 ANIMATED CONTINUOUS FOOTWEAR RUNWAY MARQUEE                          */}
+      {/* ========================================================================= */}
+      <div className="py-6 sm:py-8 bg-slate-900 border-y border-slate-800 overflow-hidden relative select-none">
+        <div className="absolute inset-y-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
+        
+        <div className="animate-marquee items-center gap-4 sm:gap-6 hover:[animation-play-state:paused] active:[animation-play-state:paused] cursor-pointer">
+          {[
+            {
+              code: 'SF-1024',
+              name: 'Apex Runner Pro',
+              spec: 'PU Direct Injection · 180k SATRA Cycles',
+              price: '₹780 FOB',
+              badge: '🔥 1,240 Pairs Lasted',
+              image: sneakerMotionImg,
+            },
+            {
+              code: 'SF-884',
+              name: 'Firenze Blake Derby',
+              spec: 'Blake-Stitched Italian Crust Calfskin',
+              price: '₹1,350 FOB',
+              badge: '✨ Handcrafted Blake Sole',
+              image: leatherCraftImg,
+            },
+            {
+              code: 'SF-512',
+              name: 'TerraGrip All-Weather',
+              spec: 'Goodyear Welted Waterproof Boot',
+              price: '₹1,620 FOB',
+              badge: '⚡ -20°C Crack Proof',
+              image: outdoorBootImg,
+            },
+            {
+              code: 'SF-204',
+              name: 'AeroGlide Knit Runner',
+              spec: '284g Lightweight Supercritical Foam',
+              price: '₹620 FOB',
+              badge: '🏃 Master Assortment Ready',
+              image: heroFootwearImg,
+            },
+            {
+              code: 'SF-910',
+              name: 'Verona Crust Brogue',
+              spec: 'Vegetable Tanned Leather Outsole',
+              price: '₹1,420 FOB',
+              badge: '👞 Export Grade Lasting',
+              image: walkingMotionBg,
+            },
+            {
+              code: 'SF-1024',
+              name: 'Apex Runner Pro',
+              spec: 'PU Direct Injection · 180k SATRA Cycles',
+              price: '₹780 FOB',
+              badge: '🔥 1,240 Pairs Lasted',
+              image: sneakerMotionImg,
+            },
+            {
+              code: 'SF-884',
+              name: 'Firenze Blake Derby',
+              spec: 'Blake-Stitched Italian Crust Calfskin',
+              price: '₹1,350 FOB',
+              badge: '✨ Handcrafted Blake Sole',
+              image: leatherCraftImg,
+            },
+            {
+              code: 'SF-512',
+              name: 'TerraGrip All-Weather',
+              spec: 'Goodyear Welted Waterproof Boot',
+              price: '₹1,620 FOB',
+              badge: '⚡ -20°C Crack Proof',
+              image: outdoorBootImg,
+            },
+            {
+              code: 'SF-204',
+              name: 'AeroGlide Knit Runner',
+              spec: '284g Lightweight Supercritical Foam',
+              price: '₹620 FOB',
+              badge: '🏃 Master Assortment Ready',
+              image: heroFootwearImg,
+            },
+            {
+              code: 'SF-910',
+              name: 'Verona Crust Brogue',
+              spec: 'Vegetable Tanned Leather Outsole',
+              price: '₹1,420 FOB',
+              badge: '👞 Export Grade Lasting',
+              image: walkingMotionBg,
+            },
+          ].map((shoe, idx) => (
+            <div
+              key={`${shoe.code}-${idx}`}
+              onClick={() => {
+                if (onNavigateToLogin) {
+                  onNavigateToLogin('signup');
+                } else {
+                  setIsAuthModalOpen(true);
+                }
+              }}
+              className="flex items-center gap-3 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-blue-500/50 shadow-md hover:shadow-blue-500/10 transition-all duration-300 shrink-0 group hover:-translate-y-1"
+            >
+              <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden shrink-0 border border-white/10 group-hover:scale-105 transition-transform">
+                <img
+                  src={shoe.image}
+                  alt={shoe.name}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover object-center animate-shoe-float"
+                  style={{ animationDelay: `${(idx % 5) * 0.5}s` }}
+                />
+              </div>
+              <div className="space-y-0.5 text-left">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-blue-400 font-bold text-[10px] sm:text-xs">
+                    {shoe.code}
+                  </span>
+                  <span className="text-[10px] text-emerald-400 font-semibold bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-500/20">
+                    {shoe.badge}
+                  </span>
+                </div>
+                <div className="font-bold text-white text-xs sm:text-sm group-hover:text-blue-300 transition-colors">
+                  {shoe.name}
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                  <span>{shoe.spec}</span>
+                  <span>·</span>
+                  <span className="font-mono font-bold text-slate-200">{shoe.price}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* ========================================================================= */}
       {/* 8. FREQUENTLY ASKED QUESTIONS (Accordion matching Hercules Screenshot 5) */}
@@ -1014,9 +1200,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
               <button
                 onClick={() => {
-                  setAuthMode('signup');
-                  setSignupError('');
-                  setIsAuthModalOpen(true);
+                  if (onNavigateToLogin) {
+                    onNavigateToLogin('signup');
+                  } else {
+                    setAuthMode('signup');
+                    setSignupError('');
+                    setIsAuthModalOpen(true);
+                  }
                 }}
                 className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-md shadow-blue-600/30 cursor-pointer"
               >
@@ -1033,9 +1223,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       <footer className="bg-slate-50/80 border-t border-slate-200/90 py-14 text-xs text-slate-600 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto space-y-10">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8">
             {/* Left Brand Col */}
-            <div className="col-span-2 space-y-2">
+            <div className="sm:col-span-2 md:col-span-2 space-y-2">
               <div className="flex items-center gap-2 text-base font-black text-slate-900">
                 <div className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">
                   <svg
@@ -1053,70 +1243,81 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </div>
                 <span>SoleFlow</span>
               </div>
-              <p className="text-xs text-slate-500 max-w-xs leading-relaxed">
+              <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
                 The best footwear B2B operating system and line sheet builder for business.
               </p>
             </div>
 
-            {/* Col 1: Product */}
-            <div className="space-y-2.5">
-              <div className="font-bold text-slate-900 text-xs">Product</div>
-              <ul className="space-y-2 text-slate-500">
-                <li>
-                  <button
-                    onClick={() => {
-                      setAuthMode('signup');
-                      setSignupError('');
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="hover:text-blue-600 transition-colors text-left cursor-pointer font-medium text-blue-600"
-                  >
-                    Create Account
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      setAuthMode('login');
-                      setAuthError('');
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="hover:text-blue-600 transition-colors text-left cursor-pointer"
-                  >
-                    Sign In
-                  </button>
-                </li>
-                <li><a href="#wholesale-calculator" className="hover:text-blue-600 transition-colors">Pricing</a></li>
-                <li><a href="#wholesale-calculator" className="hover:text-blue-600 transition-colors">Pre-Pack Calculator</a></li>
-                <li><a href="#capabilities" className="hover:text-blue-600 transition-colors">Skills</a></li>
-              </ul>
-            </div>
+            {/* Links Columns: 3 columns balanced on mobile/tablet/desktop */}
+            <div className="sm:col-span-2 md:col-span-3 grid grid-cols-3 gap-3 sm:gap-6">
+              {/* Col 1: Product */}
+              <div className="space-y-2.5 text-left">
+                <div className="font-bold text-slate-900 text-xs">Product</div>
+                <ul className="space-y-2 text-slate-500 text-[11px] sm:text-xs">
+                  <li>
+                    <button
+                      onClick={() => {
+                        if (onNavigateToLogin) {
+                          onNavigateToLogin('signup');
+                        } else {
+                          setAuthMode('signup');
+                          setSignupError('');
+                          setIsAuthModalOpen(true);
+                        }
+                      }}
+                      className="hover:text-blue-600 transition-colors text-left cursor-pointer font-medium text-blue-600"
+                    >
+                      Create Account
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        if (onNavigateToLogin) {
+                          onNavigateToLogin('login');
+                        } else {
+                          setAuthMode('login');
+                          setAuthError('');
+                          setIsAuthModalOpen(true);
+                        }
+                      }}
+                      className="hover:text-blue-600 transition-colors text-left cursor-pointer"
+                    >
+                      Sign In
+                    </button>
+                  </li>
+                  <li><a href="#wholesale-calculator" className="hover:text-blue-600 transition-colors">Pricing</a></li>
+                  <li><a href="#wholesale-calculator" className="hover:text-blue-600 transition-colors">Pre-Pack</a></li>
+                  <li><a href="#capabilities" className="hover:text-blue-600 transition-colors">Skills</a></li>
+                </ul>
+              </div>
 
-            {/* Col 2: Company */}
-            <div className="space-y-2.5">
-              <div className="font-bold text-slate-900 text-xs">Company</div>
-              <ul className="space-y-2 text-slate-500">
-                <li><a href="#case-studies" className="hover:text-blue-600 transition-colors">Case Studies</a></li>
-                <li><span className="hover:text-blue-600 transition-colors cursor-pointer">Careers</span></li>
-                <li><span className="hover:text-blue-600 transition-colors cursor-pointer">Affiliates</span></li>
-                <li><span className="hover:text-blue-600 transition-colors cursor-pointer">Changelog</span></li>
-              </ul>
-            </div>
+              {/* Col 2: Company */}
+              <div className="space-y-2.5 text-left">
+                <div className="font-bold text-slate-900 text-xs">Company</div>
+                <ul className="space-y-2 text-slate-500 text-[11px] sm:text-xs">
+                  <li><a href="#case-studies" className="hover:text-blue-600 transition-colors">Case Studies</a></li>
+                  <li><span className="hover:text-blue-600 transition-colors cursor-pointer">Careers</span></li>
+                  <li><span className="hover:text-blue-600 transition-colors cursor-pointer">Affiliates</span></li>
+                  <li><span className="hover:text-blue-600 transition-colors cursor-pointer">Changelog</span></li>
+                </ul>
+              </div>
 
-            {/* Col 3: Support & Connect */}
-            <div className="space-y-2.5">
-              <div className="font-bold text-slate-900 text-xs">Support</div>
-              <ul className="space-y-2 text-slate-500">
-                <li><a href="#capabilities" className="hover:text-blue-600 transition-colors">Docs</a></li>
-                <li><a href="#faqs" className="hover:text-blue-600 transition-colors">Forum</a></li>
-                <li><span className="hover:text-blue-600 transition-colors cursor-pointer">Status</span></li>
-                <li><span className="hover:text-blue-600 transition-colors cursor-pointer">Contact us</span></li>
-              </ul>
+              {/* Col 3: Support */}
+              <div className="space-y-2.5 text-left">
+                <div className="font-bold text-slate-900 text-xs">Support</div>
+                <ul className="space-y-2 text-slate-500 text-[11px] sm:text-xs">
+                  <li><a href="#capabilities" className="hover:text-blue-600 transition-colors">Docs</a></li>
+                  <li><a href="#faqs" className="hover:text-blue-600 transition-colors">Forum</a></li>
+                  <li><span className="hover:text-blue-600 transition-colors cursor-pointer">Status</span></li>
+                  <li><span className="hover:text-blue-600 transition-colors cursor-pointer">Contact us</span></li>
+                </ul>
+              </div>
             </div>
           </div>
 
           {/* Bottom Legal Rule */}
-          <div className="pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+          <div className="pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500 text-center sm:text-left">
             <div>© 2026 Aflix infotech pvt ltd, Inc.</div>
             <div className="flex items-center gap-4">
               <span className="hover:text-slate-800 transition-colors cursor-pointer">Terms</span>
