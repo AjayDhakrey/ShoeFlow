@@ -37,6 +37,24 @@ const AppContent: React.FC = () => {
     currentUser.role === 'admin' ? '/admin/dashboard' : '/sales/dashboard'
   );
 
+  const [unauthView, setUnauthView] = useState<'landing' | 'login' | 'signup'>('landing');
+
+  // Handle URL hash routing for direct access like #login or #signup
+  useEffect(() => {
+    const handleHash = () => {
+      if (window.location.hash === '#login') {
+        setUnauthView('login');
+      } else if (window.location.hash === '#signup') {
+        setUnauthView('signup');
+      } else if (window.location.hash === '#landing' || window.location.hash === '#home') {
+        setUnauthView('landing');
+      }
+    };
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
   // Sync route on role switch
   useEffect(() => {
     if (currentUser.role === 'admin' && currentPath.startsWith('/sales')) {
@@ -66,11 +84,31 @@ const AppContent: React.FC = () => {
   };
 
   if (!isLoggedIn) {
+    if (unauthView === 'login' || unauthView === 'signup') {
+      return (
+        <LoginPage
+          initialMode={unauthView}
+          onSuccess={(role) => {
+            setIsMobileSidebarOpen(false);
+            setCurrentPath(role === 'admin' ? '/admin/dashboard' : '/sales/dashboard');
+          }}
+          onBackToLanding={() => {
+            window.location.hash = '';
+            setUnauthView('landing');
+          }}
+        />
+      );
+    }
+
     return (
       <LandingPage
         onLoginSuccess={(role) => {
           setIsMobileSidebarOpen(false);
           setCurrentPath(role === 'admin' ? '/admin/dashboard' : '/sales/dashboard');
+        }}
+        onNavigateToLogin={(mode = 'login') => {
+          window.location.hash = mode;
+          setUnauthView(mode);
         }}
       />
     );

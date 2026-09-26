@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Lock,
   Mail,
   ArrowRight,
+  ArrowLeft,
   Play,
   Pause,
   Layers,
@@ -21,17 +22,29 @@ import showcaseBannerBg from '../../assets/images/footwear_showcase_banner_17902
 
 interface LoginPageProps {
   onSuccess: (role: 'admin' | 'salesperson') => void;
+  initialMode?: 'login' | 'signup';
+  onBackToLanding?: () => void;
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({
+  onSuccess,
+  initialMode = 'login',
+  onBackToLanding,
+}) => {
   const { login, register } = useApp();
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>(initialMode);
   const [email, setEmail] = useState('admin@soleflow.com');
   const [password, setPassword] = useState('admin123');
   const [error, setError] = useState('');
   const [isMotionActive, setIsMotionActive] = useState(true);
   const [bgMode, setBgMode] = useState<'walking' | 'showcase'>('walking');
   const [isUltraTransparent, setIsUltraTransparent] = useState(true);
+
+  useEffect(() => {
+    if (initialMode) {
+      setAuthMode(initialMode);
+    }
+  }, [initialMode]);
 
   // Signup state
   const [signupName, setSignupName] = useState('');
@@ -195,6 +208,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
       {/* 2. Top Header / Controls */}
       <header className="relative z-20 w-full max-w-5xl flex items-center justify-between py-1 sm:py-2 text-white/90">
         <div className="flex items-center gap-2">
+          {onBackToLanding && (
+            <button
+              type="button"
+              onClick={onBackToLanding}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/15 text-[10px] sm:text-xs text-white transition-colors cursor-pointer mr-1 active:scale-95"
+              title="Back to Landing Page"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span className="hidden xs:inline font-medium">Back to Home</span>
+            </button>
+          )}
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-600/90 backdrop-blur-md flex items-center justify-center text-white shadow-md ring-1 ring-white/20 shrink-0">
             <svg
               className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white"
